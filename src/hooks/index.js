@@ -21,17 +21,16 @@ export const useField = type => {
 }
 
 export const useResource = baseUrl => {
-  const { blogs } = useSelector(state => state.blogs)
-  const dispatch = useDispatch()
+  const [resources, setResources] = useState([])
 
   useEffect(() => {
     const fetchResources = async () => {
       try {
         const response = await axios.get(`${baseUrl}/blogs`)
         const sortedBlogs = response.data.sort((a, b) => b.likes - a.likes)
-        dispatch(setBlogs(sortedBlogs))
+        setResources(sortedBlogs)
       } catch (error) {
-        throw new Error(error)
+        throw new Error(error?.response?.data.error)
       }
     }
 
@@ -46,27 +45,10 @@ export const useResource = baseUrl => {
           headers: { Authorization: `Bearer ${token}` },
         }
         const response = await axios.post(`${baseUrl}/blogs`, resource, config)
-        dispatch(createBlog(response.data))
-        dispatch(
-          setNotification({
-            message: `Blog ${response.data.title} created successfully`,
-            type: 'success',
-          }),
-        )
-        setTimeout(() => {
-          dispatch(clearNotification())
-        }, 5000)
+        setResources(prev => [...prev, response.data])
       }
     } catch (error) {
-      dispatch(
-        setNotification({
-          message: error.response.data.error,
-          type: 'error',
-        }),
-      )
-      setTimeout(() => {
-        dispatch(clearNotification())
-      }, 5000)
+      throw new Error(error?.response?.data.error)
     }
   }
 
@@ -83,10 +65,13 @@ export const useResource = baseUrl => {
           resource,
           config,
         )
-        dispatch(updateBlog(response.data))
+        setResources(prev => {
+          const updatedBlogs = prev.map(b => (b.id === id ? response.data : b))
+          return updatedBlogs
+        })
       }
     } catch (error) {
-      throw new Error(error)
+      throw new Error(error?.response?.data.error)
     }
   }
 
@@ -98,29 +83,10 @@ export const useResource = baseUrl => {
           headers: { Authorization: `Bearer ${token}` },
         }
         await axios.delete(`${baseUrl}/blogs/${id}`, config)
-        dispatch(removeBlog(id))
-        dispatch(
-          setNotification({
-            message: `Blog ${
-              resources.find(r => r.id === id).title
-            } deleted successfully`,
-            type: 'success',
-          }),
-        )
-        setTimeout(() => {
-          dispatch(clearNotification())
-        }, 5000)
+        setResources(prev => prev.filter(b => b.id !== id))
       }
     } catch (error) {
-      dispatch(
-        setNotification({
-          message: error.response.data.error,
-          type: 'error',
-        }),
-      )
-      setTimeout(() => {
-        dispatch(clearNotification())
-      }, 5000)
+      throw new Error(error?.response?.data.error)
     }
   }
 
@@ -130,7 +96,7 @@ export const useResource = baseUrl => {
     remove,
   }
 
-  return [blogs, service]
+  return [resources, service]
 }
 
 // make hook to authenticate user
@@ -149,7 +115,7 @@ export const useAuth = baseUrl => {
           setUser(response.data)
         }
       } catch (error) {
-        console.error(error)
+        throw new Error(error?.response?.data.error)
       }
     }
 
@@ -165,7 +131,7 @@ export const useAuth = baseUrl => {
 
       window.localStorage.setItem('loggedUserBlogApp', response.data.token)
     } catch (error) {
-      console.error(error)
+      throw new Error(error?.response?.data.error)
     }
   }
 
