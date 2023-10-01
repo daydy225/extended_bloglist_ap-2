@@ -1,14 +1,18 @@
 /* eslint-disable linebreak-style */
 
-import { useSelector } from 'react-redux'
+import { useNotification } from '../context/NotificationContext'
 
 const Notification = () => {
-  const { message, type } = useSelector(state => state.notification)
-  if (!message) {
+  const { notification } = useNotification()
+  if (!notification) {
     return null
   }
 
-  return <div className={type === 'error' ? 'error' : 'success'}>{message}</div>
+  return (
+    <div className={notification.style === 'error' ? 'error' : 'success'}>
+      {notification.message}
+    </div>
+  )
 }
 
 export default Notification

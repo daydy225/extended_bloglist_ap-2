@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+
 import axios from 'axios'
 
 export const useField = type => {
@@ -130,6 +131,7 @@ export const useAuth = baseUrl => {
       })
 
       window.localStorage.setItem('loggedUserBlogApp', response.data.token)
+      setUser(response.data)
     } catch (error) {
       throw new Error(error?.response?.data.error)
     }
