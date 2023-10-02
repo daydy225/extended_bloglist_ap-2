@@ -6,15 +6,27 @@ import Togglable from './components/Togglable'
 import Notification from './components/Notification'
 import { useAuth, useField, useResource } from './hooks'
 import { useNotification } from './context/NotificationContext'
+import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
 
 const App = () => {
+  const queryClient = useQueryClient()
   const baseUrl = import.meta.env.VITE_BACKEND_URL
   const username = useField('text')
   const password = useField('password')
   const { setNotification, clearNotification } = useNotification()
 
   const [user, authService] = useAuth(baseUrl)
-  const [blogs, blogsService] = useResource(baseUrl)
+  const { fetchResources, create } = useResource(baseUrl)
+
+  // React query for fetching blogs
+  const { data: blogs, isLoading } = useQuery({
+    queryKey: ['blogs'],
+    queryFn: fetchResources,
+    retry: false,
+    refreshOnWindowFocus: false,
+  })
+
+  // React query for fetching users
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -38,22 +50,28 @@ const App = () => {
   }
 
   const blogFormRef = useRef()
-  const addBlogs = async newObject => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      await blogsService.create(newObject)
+  // add blog using react query mutation
+  const createAnecdoteMutation = useMutation(create, {
+    onSuccess: newBlog => {
+      queryClient.setQueryData(['blogs'], prevBlogs => [...prevBlogs, newBlog])
       setNotification({
-        message: `A new blog ${newObject.title} by ${newObject.author} added`,
+        message: `A new blog ${newBlog.title} by ${newBlog.author} added`,
         style: 'success',
       })
       clearNotification(5000)
-    } catch (error) {
+    },
+    onError: error => {
       setNotification({
         message: error.message,
         style: 'error',
       })
       clearNotification(5000)
-    }
+    },
+  })
+
+  const addBlogs = newObject => {
+    blogFormRef.current.toggleVisibility()
+    createAnecdoteMutation.mutate(newObject)
   }
 
   const updateBlogs = (id, newObject) => blogsService.update(id, newObject)
@@ -93,6 +111,10 @@ const App = () => {
         />{' '}
       </div>
     )
+  }
+
+  if (isLoading) {
+    return <div>loading...</div>
   }
 
   return (

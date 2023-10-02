@@ -22,21 +22,31 @@ export const useField = type => {
 }
 
 export const useResource = baseUrl => {
-  const [resources, setResources] = useState([])
+  // const [resources, setResources] = useState([])
 
-  useEffect(() => {
-    const fetchResources = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}/blogs`)
-        const sortedBlogs = response.data.sort((a, b) => b.likes - a.likes)
-        setResources(sortedBlogs)
-      } catch (error) {
-        throw new Error(error?.response?.data.error)
-      }
+  // useEffect(() => {
+  //   const fetchResources = async () => {
+  //     try {
+  //       const response = await axios.get(`${baseUrl}/blogs`)
+  //       const sortedBlogs = response.data.sort((a, b) => b.likes - a.likes)
+  //       setResources(sortedBlogs)
+  //     } catch (error) {
+  //       throw new Error(error?.response?.data.error)
+  //     }
+  //   }
+
+  //   fetchResources()
+  // }, [baseUrl])
+
+  const fetchResources = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/blogs`)
+      const sortedBlogs = response.data.sort((a, b) => b.likes - a.likes)
+      return sortedBlogs
+    } catch (error) {
+      throw new Error(error?.response?.data.error)
     }
-
-    fetchResources()
-  }, [baseUrl])
+  }
 
   const create = async resource => {
     try {
@@ -46,7 +56,7 @@ export const useResource = baseUrl => {
           headers: { Authorization: `Bearer ${token}` },
         }
         const response = await axios.post(`${baseUrl}/blogs`, resource, config)
-        setResources(prev => [...prev, response.data])
+        return response.data
       }
     } catch (error) {
       throw new Error(error?.response?.data.error)
@@ -66,10 +76,11 @@ export const useResource = baseUrl => {
           resource,
           config,
         )
-        setResources(prev => {
-          const updatedBlogs = prev.map(b => (b.id === id ? response.data : b))
-          return updatedBlogs
-        })
+        // setResources(prev => {
+        //   const updatedBlogs = prev.map(b => (b.id === id ? response.data : b))
+        //   return updatedBlogs
+        // })
+        return response.data
       }
     } catch (error) {
       throw new Error(error?.response?.data.error)
@@ -84,20 +95,21 @@ export const useResource = baseUrl => {
           headers: { Authorization: `Bearer ${token}` },
         }
         await axios.delete(`${baseUrl}/blogs/${id}`, config)
-        setResources(prev => prev.filter(b => b.id !== id))
+        // setResources(prev => prev.filter(b => b.id !== id))
       }
     } catch (error) {
       throw new Error(error?.response?.data.error)
     }
   }
 
-  const service = {
-    create,
-    update,
-    remove,
-  }
+  // const service = {
+  //   create,
+  //   update,
+  //   remove,
+  // }
 
-  return [resources, service]
+  // return [resources, service]
+  return { fetchResources, create, update, remove }
 }
 
 // make hook to authenticate user
