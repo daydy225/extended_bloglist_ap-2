@@ -63,7 +63,7 @@ export const useResource = baseUrl => {
     }
   }
 
-  const update = async (id, resource) => {
+  const update = async resource => {
     try {
       const token = window.localStorage.getItem('loggedUserBlogApp')
       if (token) {
@@ -72,14 +72,11 @@ export const useResource = baseUrl => {
         }
 
         const response = await axios.put(
-          `${baseUrl}/blogs/${id}`,
+          `${baseUrl}/blogs/${resource.id}`,
           resource,
           config,
         )
-        // setResources(prev => {
-        //   const updatedBlogs = prev.map(b => (b.id === id ? response.data : b))
-        //   return updatedBlogs
-        // })
+
         return response.data
       }
     } catch (error) {
@@ -95,20 +92,12 @@ export const useResource = baseUrl => {
           headers: { Authorization: `Bearer ${token}` },
         }
         await axios.delete(`${baseUrl}/blogs/${id}`, config)
-        // setResources(prev => prev.filter(b => b.id !== id))
       }
     } catch (error) {
       throw new Error(error?.response?.data.error)
     }
   }
 
-  // const service = {
-  //   create,
-  //   update,
-  //   remove,
-  // }
-
-  // return [resources, service]
   return { fetchResources, create, update, remove }
 }
 

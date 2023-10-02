@@ -39,7 +39,8 @@ const Blog = ({ blog, update, deleteBlog, user }) => {
           likes
           {blog.likes}{' '}
           <button
-            onClick={() => update(blog.id, { ...blog, likes: blog.likes + 1 })}
+            // onClick={() => update(blog.id, { ...blog, likes: blog.likes + 1 })}
+            onClick={() => update(blog)}
           >
             like
           </button>

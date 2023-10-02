@@ -16,7 +16,7 @@ const App = () => {
   const { setNotification, clearNotification } = useNotification()
 
   const [user, authService] = useAuth(baseUrl)
-  const { fetchResources, create } = useResource(baseUrl)
+  const { fetchResources, create, update, remove } = useResource(baseUrl)
 
   // React query for fetching blogs
   const { data: blogs, isLoading } = useQuery({
@@ -51,7 +51,7 @@ const App = () => {
 
   const blogFormRef = useRef()
   // add blog using react query mutation
-  const createAnecdoteMutation = useMutation(create, {
+  const createBlogMutation = useMutation(create, {
     onSuccess: newBlog => {
       queryClient.setQueryData(['blogs'], prevBlogs => [...prevBlogs, newBlog])
       setNotification({
@@ -71,26 +71,43 @@ const App = () => {
 
   const addBlogs = newObject => {
     blogFormRef.current.toggleVisibility()
-    createAnecdoteMutation.mutate(newObject)
+    createBlogMutation.mutate(newObject)
   }
 
-  const updateBlogs = (id, newObject) => blogsService.update(id, newObject)
+  // update blog like using react query mutation
+  const updateBlogMutation = useMutation(update, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(['blogs'])
+    },
+  })
+  const updateBlogs = blog => {
+    updateBlogMutation.mutate({
+      ...blog,
+      likes: blog.likes + 1,
+    })
+  }
 
-  const deleteBlogs = async id => {
-    try {
-      await blogsService.remove(id)
+  // remove blog using react query mutation
+  const deleteBlogMutation = useMutation(remove, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
       setNotification({
         message: `Blog has been removed`,
         style: 'success',
       })
       clearNotification(5000)
-    } catch (error) {
+    },
+    onError: error => {
       setNotification({
         message: error.message,
         style: 'error',
       })
       clearNotification(5000)
-    }
+    },
+  })
+
+  const deleteBlogs = async id => {
+    deleteBlogMutation.mutate(id)
   }
 
   const logout = event => {
