@@ -50,7 +50,7 @@ export const useResource = baseUrl => {
 
   const create = async resource => {
     try {
-      const token = window.localStorage.getItem('loggedUserBlogApp')
+      const token = window.localStorage.getItem('token')
       if (token) {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
@@ -65,7 +65,7 @@ export const useResource = baseUrl => {
 
   const update = async resource => {
     try {
-      const token = window.localStorage.getItem('loggedUserBlogApp')
+      const token = window.localStorage.getItem('token')
       if (token) {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
@@ -86,7 +86,7 @@ export const useResource = baseUrl => {
 
   const remove = async id => {
     try {
-      const token = window.localStorage.getItem('loggedUserBlogApp')
+      const token = window.localStorage.getItem('token')
       if (token) {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
@@ -99,54 +99,4 @@ export const useResource = baseUrl => {
   }
 
   return { fetchResources, create, update, remove }
-}
-
-// make hook to authenticate user
-export const useAuth = baseUrl => {
-  const [user, setUser] = useState(null)
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = window.localStorage.getItem('loggedUserBlogApp')
-        if (token) {
-          const config = {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-          const response = await axios.get(`${baseUrl}/users/get-data`, config)
-          setUser(response.data)
-        }
-      } catch (error) {
-        throw new Error(error?.response?.data.error)
-      }
-    }
-
-    fetchUser()
-  }, [])
-
-  const login = async (username, password) => {
-    try {
-      const response = await axios.post(`${baseUrl}/login`, {
-        username,
-        password,
-      })
-
-      window.localStorage.setItem('loggedUserBlogApp', response.data.token)
-      setUser(response.data)
-    } catch (error) {
-      throw new Error(error?.response?.data.error)
-    }
-  }
-
-  const logout = () => {
-    window.localStorage.removeItem('loggedUserBlogApp')
-    setUser(null)
-  }
-
-  const service = {
-    login,
-    logout,
-  }
-
-  return [user, service]
 }

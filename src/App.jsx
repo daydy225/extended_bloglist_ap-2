@@ -4,9 +4,10 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
-import { useAuth, useField, useResource } from './hooks'
+import { useField, useResource } from './hooks'
 import { useNotification } from './context/NotificationContext'
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
+import { useUser } from './context/UserContext'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -15,7 +16,8 @@ const App = () => {
   const password = useField('password')
   const { setNotification, clearNotification } = useNotification()
 
-  const [user, authService] = useAuth(baseUrl)
+  const { login, loggedIn, logout, user } = useUser()
+
   const { fetchResources, create, update, remove } = useResource(baseUrl)
 
   // React query for fetching blogs
@@ -31,18 +33,18 @@ const App = () => {
   const handleLogin = async event => {
     event.preventDefault()
     try {
-      await authService.login(username.value, password.value)
+      await login({ username: username.value, password: password.value })
       setNotification({
-        message: 'logged in successfully',
+        message: `Welcome ${username.value}`,
         style: 'success',
       })
-      clearNotification(5000)
+      clearNotification(3000)
     } catch (error) {
       setNotification({
         message: error.message,
         style: 'error',
       })
-      clearNotification(5000)
+      clearNotification(3000)
     } finally {
       username.reset()
       password.reset()
@@ -110,13 +112,7 @@ const App = () => {
     deleteBlogMutation.mutate(id)
   }
 
-  const logout = event => {
-    event.preventDefault()
-    authService.logout()
-    window.location.reload()
-  }
-
-  if (user === null) {
+  if (!loggedIn) {
     return (
       <div>
         <h2>log in to application</h2>
@@ -139,8 +135,8 @@ const App = () => {
       <h2>blogs</h2>
       <Notification />
       <div>
-        {user.name} logged in
-        <button type="button" onClick={logout}>
+        {user.name} logged in{' '}
+        <button type="button" onClick={() => logout()}>
           logout
         </button>
       </div>

@@ -37,13 +37,7 @@ const Blog = ({ blog, update, deleteBlog, user }) => {
         <div>{blog.url}</div>
         <div data-test="like-count">
           likes
-          {blog.likes}{' '}
-          <button
-            // onClick={() => update(blog.id, { ...blog, likes: blog.likes + 1 })}
-            onClick={() => update(blog)}
-          >
-            like
-          </button>
+          {blog.likes} <button onClick={() => update(blog)}>like</button>
         </div>
         <div data-test="blog-author">{blog.user.name}</div>
         {blog.user.name === user.name ? (
