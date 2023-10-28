@@ -17,3 +17,9 @@
 ## 7.11: React Query and context step 4
 
 - Use the useReducer-hook and context to manage the data for the logged in user.
+
+# Views
+
+## 7.14: Users view 5
+
+- Implement a view to the application that displays all of the basic information related to users.

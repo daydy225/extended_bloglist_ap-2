@@ -8,6 +8,8 @@ import { useField, useResource } from './hooks'
 import { useNotification } from './context/NotificationContext'
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
 import { useUser } from './context/UserContext'
+import BlogList from './components/BlogList'
+import api from './api'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -24,6 +26,13 @@ const App = () => {
   const { data: blogs, isLoading } = useQuery({
     queryKey: ['blogs'],
     queryFn: fetchResources,
+    retry: false,
+    refreshOnWindowFocus: false,
+  })
+  // React query for fetching all users
+  const { data: users, isLoading: isUserloading } = useQuery({
+    queryKey: ['users'],
+    queryFn: api.fetchAllUsers,
     retry: false,
     refreshOnWindowFocus: false,
   })
@@ -134,31 +143,47 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification />
-      <div>
-        {user.name} logged in{' '}
-        <button type="button" onClick={() => logout()}>
-          logout
-        </button>
-      </div>
+      <p>{user.name} logged in</p>
+      <button type="button" onClick={() => logout()}>
+        logout
+      </button>
 
-      <br />
-      <Togglable
-        buttonLabel="create new"
-        buttonLabel2="cancel"
-        ref={blogFormRef}
-      >
-        <BlogForm addBlog={addBlogs} />
-      </Togglable>
-
-      {blogs.map(blog => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-          update={updateBlogs}
-          deleteBlog={deleteBlogs}
-          user={user}
-        />
-      ))}
+      <h2>Users</h2>
+      {isUserloading ? (
+        <div>loading...</div>
+      ) : (
+        <table
+          style={{
+            borderCollapse: 'collapse',
+          }}
+        >
+          <thead>
+            <tr>
+              <th></th>
+              <th>blogs created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* <tr>
+              <td>{user.name}</td>
+              <td>{user.blogs.length}</td>
+            </tr> */}
+            {users.map(user => (
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.blogs.length}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {/* <BlogList
+        blogs={blogs}
+        updateBlogs={updateBlogs}
+        delete={deleteBlogs}
+        user={user}
+        blogFormRef={blogFormRef}
+      /> */}
     </div>
   )
 }

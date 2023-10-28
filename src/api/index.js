@@ -24,6 +24,20 @@ const api = {
       throw new Error(error?.response?.data.error)
     }
   },
+  fetchAllUsers: async () => {
+    try {
+      const token = window.localStorage.getItem('token')
+      if (token) {
+        const config = {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+        const response = await axios.get(`${baseUrl}/users`, config)
+        return response.data
+      }
+    } catch (error) {
+      throw new Error(error?.response?.data.error)
+    }
+  },
 }
 
 export default api
