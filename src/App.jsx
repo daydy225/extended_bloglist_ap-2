@@ -10,6 +10,10 @@ import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
 import { useUser } from './context/UserContext'
 import BlogList from './components/BlogList'
 import api from './api'
+import User from './components/Users'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import Users from './components/Users'
+import Login from './components/Login'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -121,70 +125,45 @@ const App = () => {
     deleteBlogMutation.mutate(id)
   }
 
-  if (!loggedIn) {
-    return (
-      <div>
-        <h2>log in to application</h2>
-        <Notification />
-        <LoginForm
-          handleSubmit={handleLogin}
-          usernameInput={username}
-          passwordInput={password}
-        />{' '}
-      </div>
-    )
-  }
+  console.log('loggedIn', loggedIn)
 
-  if (isLoading) {
+  if (isUserloading) {
     return <div>loading...</div>
   }
 
   return (
-    <div>
-      <h2>blogs</h2>
-      <Notification />
-      <p>{user.name} logged in</p>
-      <button type="button" onClick={() => logout()}>
-        logout
-      </button>
-
-      <h2>Users</h2>
-      {isUserloading ? (
-        <div>loading...</div>
-      ) : (
-        <table
-          style={{
-            borderCollapse: 'collapse',
-          }}
-        >
-          <thead>
-            <tr>
-              <th></th>
-              <th>blogs created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* <tr>
-              <td>{user.name}</td>
-              <td>{user.blogs.length}</td>
-            </tr> */}
-            {users.map(user => (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.blogs.length}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-      {/* <BlogList
-        blogs={blogs}
-        updateBlogs={updateBlogs}
-        delete={deleteBlogs}
-        user={user}
-        blogFormRef={blogFormRef}
-      /> */}
-    </div>
+    <Routes>
+      <Route
+        path="/users"
+        element={
+          loggedIn ? (
+            <Users
+              users={users}
+              user={user}
+              isLoading={isUserloading}
+              logout={logout}
+            />
+          ) : (
+            <Navigate replace to="/" />
+          )
+        }
+      />
+      <Route
+        path="/"
+        element={
+          !loggedIn ? (
+            <Login
+              handleLogin={handleLogin}
+              username={username}
+              password={password}
+            />
+          ) : (
+            <Navigate replace to="/users" />
+          )
+        }
+      />
+    </Routes>
   )
 }
+
 export default App
