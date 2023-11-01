@@ -4,32 +4,31 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
-import { useField, useResource } from './hooks'
+import { useField } from './hooks'
 import { useNotification } from './context/NotificationContext'
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
 import { useUser } from './context/UserContext'
 import BlogList from './components/BlogList'
 import api from './api'
-import User from './components/Users'
-import { Navigate, Route, Routes } from 'react-router-dom'
-import Users from './components/Users'
+import { User, UsersContainer } from './components/Users'
+import { Navigate, Route, Routes, useMatch } from 'react-router-dom'
 import Login from './components/Login'
 
 const App = () => {
   const queryClient = useQueryClient()
-  const baseUrl = import.meta.env.VITE_BACKEND_URL
+  // const baseUrl = import.meta.env.VITE_BACKEND_URL
   const username = useField('text')
   const password = useField('password')
   const { setNotification, clearNotification } = useNotification()
 
-  const { login, loggedIn, logout, user } = useUser()
+  const { login, loggedIn } = useUser()
 
-  const { fetchResources, create, update, remove } = useResource(baseUrl)
+  // const { fetchResources, create, update, remove } = useResource(baseUrl)
 
   // React query for fetching blogs
   const { data: blogs, isLoading } = useQuery({
     queryKey: ['blogs'],
-    queryFn: fetchResources,
+    queryFn: api.fetchResources,
     retry: false,
     refreshOnWindowFocus: false,
   })
@@ -66,7 +65,7 @@ const App = () => {
 
   const blogFormRef = useRef()
   // add blog using react query mutation
-  const createBlogMutation = useMutation(create, {
+  const createBlogMutation = useMutation(api.create, {
     onSuccess: newBlog => {
       queryClient.setQueryData(['blogs'], prevBlogs => [...prevBlogs, newBlog])
       setNotification({
@@ -90,7 +89,7 @@ const App = () => {
   }
 
   // update blog like using react query mutation
-  const updateBlogMutation = useMutation(update, {
+  const updateBlogMutation = useMutation(api.update, {
     onSuccess: () => {
       queryClient.invalidateQueries(['blogs'])
     },
@@ -103,7 +102,7 @@ const App = () => {
   }
 
   // remove blog using react query mutation
-  const deleteBlogMutation = useMutation(remove, {
+  const deleteBlogMutation = useMutation(api.create, {
     onSuccess: () => {
       queryClient.invalidateQueries('blogs')
       setNotification({
@@ -125,24 +124,22 @@ const App = () => {
     deleteBlogMutation.mutate(id)
   }
 
-  console.log('loggedIn', loggedIn)
+  // if (isUserloading) {
+  //   return <div>loading...</div>
+  // }
 
-  if (isUserloading) {
-    return <div>loading...</div>
-  }
+  const match = useMatch('/users/:id')
+  const userSelected =
+    match && users?.find(user => user.id === match?.params.id)
 
   return (
     <Routes>
+      <Route path="/users/:id" element={<User userSelected={userSelected} />} />
       <Route
         path="/users"
         element={
           loggedIn ? (
-            <Users
-              users={users}
-              user={user}
-              isLoading={isUserloading}
-              logout={logout}
-            />
+            <UsersContainer users={users} isLoading={isUserloading} />
           ) : (
             <Navigate replace to="/" />
           )

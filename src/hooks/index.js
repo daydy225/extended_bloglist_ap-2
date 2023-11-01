@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import axios from 'axios'
 
@@ -21,82 +21,66 @@ export const useField = type => {
   }
 }
 
-export const useResource = baseUrl => {
-  // const [resources, setResources] = useState([])
+// export const useResource = baseUrl => {
+//   const fetchResources = async () => {
+//     try {
+//       const response = await axios.get(`${baseUrl}/blogs`)
+//       const sortedBlogs = response.data.sort((a, b) => b.likes - a.likes)
+//       return sortedBlogs
+//     } catch (error) {
+//       throw new Error(error?.response?.data.error)
+//     }
+//   }
 
-  // useEffect(() => {
-  //   const fetchResources = async () => {
-  //     try {
-  //       const response = await axios.get(`${baseUrl}/blogs`)
-  //       const sortedBlogs = response.data.sort((a, b) => b.likes - a.likes)
-  //       setResources(sortedBlogs)
-  //     } catch (error) {
-  //       throw new Error(error?.response?.data.error)
-  //     }
-  //   }
+//   const create = async resource => {
+//     try {
+//       const token = window.localStorage.getItem('token')
+//       if (token) {
+//         const config = {
+//           headers: { Authorization: `Bearer ${token}` },
+//         }
+//         const response = await axios.post(`${baseUrl}/blogs`, resource, config)
+//         return response.data
+//       }
+//     } catch (error) {
+//       throw new Error(error?.response?.data.error)
+//     }
+//   }
 
-  //   fetchResources()
-  // }, [baseUrl])
+//   const update = async resource => {
+//     try {
+//       const token = window.localStorage.getItem('token')
+//       if (token) {
+//         const config = {
+//           headers: { Authorization: `Bearer ${token}` },
+//         }
 
-  const fetchResources = async () => {
-    try {
-      const response = await axios.get(`${baseUrl}/blogs`)
-      const sortedBlogs = response.data.sort((a, b) => b.likes - a.likes)
-      return sortedBlogs
-    } catch (error) {
-      throw new Error(error?.response?.data.error)
-    }
-  }
+//         const response = await axios.put(
+//           `${baseUrl}/blogs/${resource.id}`,
+//           resource,
+//           config,
+//         )
 
-  const create = async resource => {
-    try {
-      const token = window.localStorage.getItem('token')
-      if (token) {
-        const config = {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-        const response = await axios.post(`${baseUrl}/blogs`, resource, config)
-        return response.data
-      }
-    } catch (error) {
-      throw new Error(error?.response?.data.error)
-    }
-  }
+//         return response.data
+//       }
+//     } catch (error) {
+//       throw new Error(error?.response?.data.error)
+//     }
+//   }
 
-  const update = async resource => {
-    try {
-      const token = window.localStorage.getItem('token')
-      if (token) {
-        const config = {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+//   const remove = async id => {
+//     try {
+//       const token = window.localStorage.getItem('token')
+//       if (token) {
+//         const config = {
+//           headers: { Authorization: `Bearer ${token}` },
+//         }
+//         await axios.delete(`${baseUrl}/blogs/${id}`, config)
+//       }
+//     } catch (error) {
+//       throw new Error(error?.response?.data.error)
+//     }
+//   }
 
-        const response = await axios.put(
-          `${baseUrl}/blogs/${resource.id}`,
-          resource,
-          config,
-        )
-
-        return response.data
-      }
-    } catch (error) {
-      throw new Error(error?.response?.data.error)
-    }
-  }
-
-  const remove = async id => {
-    try {
-      const token = window.localStorage.getItem('token')
-      if (token) {
-        const config = {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-        await axios.delete(`${baseUrl}/blogs/${id}`, config)
-      }
-    } catch (error) {
-      throw new Error(error?.response?.data.error)
-    }
-  }
-
-  return { fetchResources, create, update, remove }
-}
+//   return { fetchResources, create, update, remove }
+// }

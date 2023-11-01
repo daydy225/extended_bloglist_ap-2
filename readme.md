@@ -20,6 +20,10 @@
 
 # Views
 
-## 7.14: Users view 5
+## 7.14: Users view
+
+- Implement a view to the application that displays all of the basic information related to users.
+
+## 7.15: Individual user view
 
 - Implement a view to the application that displays all of the basic information related to users.
