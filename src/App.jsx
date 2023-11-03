@@ -13,6 +13,7 @@ import api from './api'
 import { User, UsersContainer } from './components/Users'
 import { Navigate, Route, Routes, useMatch } from 'react-router-dom'
 import Login from './components/Login'
+import BlogsContainer, { SingleBlogInfo } from './components/BlogContainer'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -26,7 +27,7 @@ const App = () => {
   // const { fetchResources, create, update, remove } = useResource(baseUrl)
 
   // React query for fetching blogs
-  const { data: blogs, isLoading } = useQuery({
+  const { data: blogs, isLoading: isBlogsLoading } = useQuery({
     queryKey: ['blogs'],
     queryFn: api.fetchResources,
     retry: false,
@@ -136,17 +137,48 @@ const App = () => {
     <Routes>
       <Route path="/users/:id" element={<User userSelected={userSelected} />} />
       <Route
-        path="/users"
+        path="/blogs/:id"
         element={
           loggedIn ? (
-            <UsersContainer users={users} isLoading={isUserloading} />
+            <SingleBlogInfo blogs={blogs} update={updateBlogs} />
           ) : (
-            <Navigate replace to="/" />
+            <Navigate replace to="/login" />
           )
         }
       />
       <Route
         path="/"
+        element={
+          loggedIn ? (
+            <BlogsContainer
+              blogs={blogs}
+              isLoading={isBlogsLoading}
+              addBlogs={addBlogs}
+              blogFormRef={blogFormRef}
+              deleteBlogs={deleteBlogs}
+              updateBlogs={updateBlogs}
+            />
+          ) : (
+            <Navigate replace to="/login" />
+          )
+        }
+      />
+      <Route
+        path="/users"
+        element={<UsersContainer users={users} isLoading={isUserloading} />}
+      />
+      {/* <Route
+        path="/users"
+        element={
+          loggedIn ? (
+            <UsersContainer users={users} isLoading={isUserloading} />
+          ) : (
+            <Navigate replace to="/login" />
+          )
+        }
+      /> */}
+      <Route
+        path="/login"
         element={
           !loggedIn ? (
             <Login
@@ -155,7 +187,7 @@ const App = () => {
               password={password}
             />
           ) : (
-            <Navigate replace to="/users" />
+            <Navigate replace to="/" />
           )
         }
       />

@@ -20,9 +20,9 @@ const BlogList = ({
       >
         <BlogForm addBlog={addBlogs} />
       </Togglable>
-      {blogs.map(blog => (
+      {blogs?.map(blog => (
         <Blog
-          key={blog.id}
+          key={blog?.id}
           blog={blog}
           update={updateBlogs}
           deleteBlog={deleteBlogs}

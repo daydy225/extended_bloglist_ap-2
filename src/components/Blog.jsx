@@ -1,6 +1,7 @@
 /* eslint-disable linebreak-style */
 import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
 const Blog = ({ blog, update, deleteBlog, user }) => {
   const [blogVisible, setBlogVisible] = useState(false)
@@ -26,8 +27,10 @@ const Blog = ({ blog, update, deleteBlog, user }) => {
   return (
     <div style={blogStyle} data-test="blogs">
       <div className="blogTitle">
-        {blog.title} {blog.author}
-        <button onClick={handleView}>{blogVisible ? 'hide' : 'view'}</button>
+        <Link to={`/blogs/${blog.id}`}>
+          {blog.title} {blog.author}
+        </Link>
+        {/* <button onClick={handleView}>{blogVisible ? 'hide' : 'view'}</button> */}
       </div>
 
       <div

@@ -2,6 +2,7 @@ import React from 'react'
 import Notification from './Notification'
 import { Link } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
+import { LoggedContainer } from './LoggedInContainer'
 
 export const UsersContainer = ({ users, isLoading }) => {
   const { user, logout } = useUser()
@@ -57,19 +58,6 @@ export const User = ({ userSelected }) => {
           <li key={blog.id}>{blog.title}</li>
         ))}
       </ul>
-    </>
-  )
-}
-
-const LoggedContainer = ({ user, logout }) => {
-  return (
-    <>
-      <h2>blogs</h2>
-      <Notification />
-      <p>{user?.name} logged in</p>
-      <button type="button" onClick={() => logout()}>
-        logout
-      </button>
     </>
   )
 }

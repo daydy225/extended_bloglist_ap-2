@@ -27,3 +27,7 @@
 ## 7.15: Individual user view
 
 - Implement a view to the application that displays all of the basic information related to users.
+
+## 7.16: Blog view
+
+- Implement a separate view for blog posts.

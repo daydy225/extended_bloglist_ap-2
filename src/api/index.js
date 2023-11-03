@@ -1,6 +1,5 @@
 import axios from 'axios'
 const baseUrl = import.meta.env.VITE_BACKEND_URL
-const token = window.localStorage.getItem('token')
 
 const api = {
   login: async credentials => {
@@ -13,6 +12,7 @@ const api = {
   },
   getUserData: async () => {
     try {
+      const token = window.localStorage.getItem('token')
       if (token) {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
@@ -26,6 +26,7 @@ const api = {
   },
   fetchAllUsers: async () => {
     try {
+      const token = window.localStorage.getItem('token')
       if (token) {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
@@ -48,6 +49,7 @@ const api = {
   },
   create: async resource => {
     try {
+      const token = window.localStorage.getItem('token')
       if (token) {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
@@ -61,6 +63,7 @@ const api = {
   },
   update: async resource => {
     try {
+      const token = window.localStorage.getItem('token')
       if (token) {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
@@ -80,6 +83,7 @@ const api = {
   },
   remove: async id => {
     try {
+      const token = window.localStorage.getItem('token')
       if (token) {
         const config = {
           headers: { Authorization: `Bearer ${token}` },
