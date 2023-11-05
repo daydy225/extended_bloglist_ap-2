@@ -11,9 +11,10 @@ import { useUser } from './context/UserContext'
 import BlogList from './components/BlogList'
 import api from './api'
 import { User, UsersContainer } from './components/Users'
-import { Navigate, Route, Routes, useMatch } from 'react-router-dom'
+import { Link, Navigate, Route, Routes, useMatch } from 'react-router-dom'
 import Login from './components/Login'
 import BlogsContainer, { SingleBlogInfo } from './components/BlogContainer'
+import NavMenu from './components/NavMenu'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -134,64 +135,62 @@ const App = () => {
     match && users?.find(user => user.id === match?.params.id)
 
   return (
-    <Routes>
-      <Route path="/users/:id" element={<User userSelected={userSelected} />} />
-      <Route
-        path="/blogs/:id"
-        element={
-          loggedIn ? (
-            <SingleBlogInfo blogs={blogs} update={updateBlogs} />
-          ) : (
-            <Navigate replace to="/login" />
-          )
-        }
-      />
-      <Route
-        path="/"
-        element={
-          loggedIn ? (
-            <BlogsContainer
-              blogs={blogs}
-              isLoading={isBlogsLoading}
-              addBlogs={addBlogs}
-              blogFormRef={blogFormRef}
-              deleteBlogs={deleteBlogs}
-              updateBlogs={updateBlogs}
-            />
-          ) : (
-            <Navigate replace to="/login" />
-          )
-        }
-      />
-      <Route
-        path="/users"
-        element={<UsersContainer users={users} isLoading={isUserloading} />}
-      />
-      {/* <Route
-        path="/users"
-        element={
-          loggedIn ? (
-            <UsersContainer users={users} isLoading={isUserloading} />
-          ) : (
-            <Navigate replace to="/login" />
-          )
-        }
-      /> */}
-      <Route
-        path="/login"
-        element={
-          !loggedIn ? (
-            <Login
-              handleLogin={handleLogin}
-              username={username}
-              password={password}
-            />
-          ) : (
-            <Navigate replace to="/" />
-          )
-        }
-      />
-    </Routes>
+    <>
+      <Notification />
+      <NavMenu />
+      <h1>blog app</h1>
+      <Routes>
+        <Route
+          path="/users/:id"
+          element={<User userSelected={userSelected} />}
+        />
+        <Route
+          path="/blogs/:id"
+          element={
+            loggedIn ? (
+              <SingleBlogInfo blogs={blogs} update={updateBlogs} />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/"
+          element={
+            loggedIn ? (
+              <BlogsContainer
+                blogs={blogs}
+                isLoading={isBlogsLoading}
+                addBlogs={addBlogs}
+                blogFormRef={blogFormRef}
+                deleteBlogs={deleteBlogs}
+                updateBlogs={updateBlogs}
+              />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/users"
+          element={<UsersContainer users={users} isLoading={isUserloading} />}
+        />
+        <Route
+          path="/login"
+          element={
+            !loggedIn ? (
+              <Login
+                handleLogin={handleLogin}
+                username={username}
+                password={password}
+              />
+            ) : (
+              <Navigate replace to="/" />
+            )
+          }
+        />
+      </Routes>
+    </>
   )
 }
 

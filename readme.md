@@ -31,3 +31,7 @@
 ## 7.16: Blog view
 
 - Implement a separate view for blog posts.
+
+## 7.17: Navigation
+
+- Implement a navigation menu for the application

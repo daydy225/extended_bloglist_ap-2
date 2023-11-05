@@ -2,13 +2,10 @@ import React from 'react'
 import Notification from './Notification'
 import { Link } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
-import { LoggedContainer } from './LoggedInContainer'
 
 export const UsersContainer = ({ users, isLoading }) => {
-  const { user, logout } = useUser()
   return (
     <>
-      <LoggedContainer user={user} logout={logout} />
       <h2>Users</h2>
       {isLoading ? <div>loading...</div> : <UserTable users={users} />}
     </>

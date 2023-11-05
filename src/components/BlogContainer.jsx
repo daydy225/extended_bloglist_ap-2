@@ -1,5 +1,4 @@
 import React from 'react'
-import { LoggedContainer } from './LoggedInContainer'
 import { useUser } from '../context/UserContext'
 import BlogList from './BlogList'
 import { useMatch } from 'react-router-dom'
@@ -12,10 +11,9 @@ const BlogsContainer = ({
   addBlogs,
   updateBlogs,
 }) => {
-  const { user, logout } = useUser()
+  const { user } = useUser()
   return (
     <>
-      <LoggedContainer user={user} logout={logout} />
       {isLoading ? (
         <div>loading...</div>
       ) : (
@@ -28,19 +26,16 @@ const BlogsContainer = ({
           user={user}
         />
       )}
-      {/* <div>BlogContainer</div> */}
     </>
   )
 }
 
 export const SingleBlogInfo = ({ blogs, update }) => {
-  const { user, logout } = useUser()
   const match = useMatch('/blogs/:id')
   const blogSelected =
     match && blogs?.find(blog => blog.id === match?.params.id)
   return (
     <>
-      <LoggedContainer user={user} logout={logout} />
       {blogSelected ? (
         <>
           <h2>{blogSelected.title}</h2>
