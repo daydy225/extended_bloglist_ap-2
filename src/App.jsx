@@ -8,10 +8,9 @@ import { useField } from './hooks'
 import { useNotification } from './context/NotificationContext'
 import { useQueryClient, useQuery, useMutation } from '@tanstack/react-query'
 import { useUser } from './context/UserContext'
-import BlogList from './components/BlogList'
 import api from './api'
 import { User, UsersContainer } from './components/Users'
-import { Link, Navigate, Route, Routes, useMatch } from 'react-router-dom'
+import { Navigate, Route, Routes, useMatch } from 'react-router-dom'
 import Login from './components/Login'
 import BlogsContainer, { SingleBlogInfo } from './components/BlogContainer'
 import NavMenu from './components/NavMenu'
@@ -24,8 +23,6 @@ const App = () => {
   const { setNotification, clearNotification } = useNotification()
 
   const { login, loggedIn } = useUser()
-
-  // const { fetchResources, create, update, remove } = useResource(baseUrl)
 
   // React query for fetching blogs
   const { data: blogs, isLoading: isBlogsLoading } = useQuery({
@@ -85,6 +82,17 @@ const App = () => {
     },
   })
 
+  const addCommentMutation = useMutation(api.createComment, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+      setNotification({
+        message: `A new comment added`,
+        style: 'success',
+      })
+      clearNotification(5000)
+    },
+  })
+
   const addBlogs = newObject => {
     blogFormRef.current.toggleVisibility()
     createBlogMutation.mutate(newObject)
@@ -126,9 +134,9 @@ const App = () => {
     deleteBlogMutation.mutate(id)
   }
 
-  // if (isUserloading) {
-  //   return <div>loading...</div>
-  // }
+  const addComment = newObject => {
+    addCommentMutation.mutate(newObject)
+  }
 
   const match = useMatch('/users/:id')
   const userSelected =
@@ -136,9 +144,9 @@ const App = () => {
 
   return (
     <>
+      {loggedIn && <NavMenu />}
       <Notification />
-      <NavMenu />
-      <h1>blog app</h1>
+      <h2>{loggedIn ? 'blog app' : 'log in to application'}</h2>
       <Routes>
         <Route
           path="/users/:id"
@@ -148,7 +156,11 @@ const App = () => {
           path="/blogs/:id"
           element={
             loggedIn ? (
-              <SingleBlogInfo blogs={blogs} update={updateBlogs} />
+              <SingleBlogInfo
+                blogs={blogs}
+                update={updateBlogs}
+                addComment={addComment}
+              />
             ) : (
               <Navigate replace to="/login" />
             )

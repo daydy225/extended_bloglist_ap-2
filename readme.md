@@ -35,3 +35,11 @@
 ## 7.17: Navigation
 
 - Implement a navigation menu for the application
+
+## 7.18: comments, step1
+
+- Implement the functionality for commenting on blog posts
+
+## 7.19: comments, step2
+
+- Extend your application so that users can add comments to blog posts from the frontend

@@ -2,6 +2,7 @@ import React from 'react'
 import { useUser } from '../context/UserContext'
 import BlogList from './BlogList'
 import { useMatch } from 'react-router-dom'
+import { useField } from '../hooks'
 
 const BlogsContainer = ({
   blogs,
@@ -30,7 +31,7 @@ const BlogsContainer = ({
   )
 }
 
-export const SingleBlogInfo = ({ blogs, update }) => {
+export const SingleBlogInfo = ({ blogs, update, addComment }) => {
   const match = useMatch('/blogs/:id')
   const blogSelected =
     match && blogs?.find(blog => blog.id === match?.params.id)
@@ -53,8 +54,42 @@ export const SingleBlogInfo = ({ blogs, update }) => {
             <br />
             added by {blogSelected.author}
           </p>
+          <CommentList blog={blogSelected} addComment={addComment} />
         </>
       ) : null}
+    </>
+  )
+}
+
+const CommentList = ({ blog, addComment }) => {
+  const { reset, ...comment } = useField('text')
+
+  const addComments = blog => {
+    if (comment.value.trim() === '') {
+      return
+    }
+
+    addComment({
+      text: comment.value,
+      blogId: blog.id,
+    })
+    reset()
+  }
+
+  return (
+    <>
+      <h3>comments</h3>
+      <div>
+        <input {...comment} placeholder="add comment..." />{' '}
+        <button onClick={() => addComments(blog)}>add comment</button>
+      </div>
+      <ul>
+        {blog.comments.length > 0
+          ? blog.comments.map(comment => {
+              return <li key={comment.id}>{comment.text}</li>
+            })
+          : null}
+      </ul>
     </>
   )
 }

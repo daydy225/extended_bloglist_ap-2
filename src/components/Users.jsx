@@ -42,11 +42,10 @@ export const UserTable = ({ users }) => {
 }
 
 export const User = ({ userSelected }) => {
-  const { user, logout } = useUser()
+  const { user } = useUser()
 
   return (
     <>
-      <LoggedContainer user={user} logout={logout} />
       <h2>{user?.name}</h2>
       <h4>added blogs</h4>
       <ul>

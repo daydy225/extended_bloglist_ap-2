@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
 const Blog = ({ blog, update, deleteBlog, user }) => {
-  const [blogVisible, setBlogVisible] = useState(false)
+  // const [blogVisible, setBlogVisible] = useState(false)
 
   const blogStyle = {
     paddingTop: 10,
@@ -14,9 +14,9 @@ const Blog = ({ blog, update, deleteBlog, user }) => {
     marginBottom: 5,
   }
 
-  const handleView = () => {
-    setBlogVisible(!blogVisible)
-  }
+  // const handleView = () => {
+  //   setBlogVisible(!blogVisible)
+  // }
 
   const deleteABlog = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
@@ -33,10 +33,7 @@ const Blog = ({ blog, update, deleteBlog, user }) => {
         {/* <button onClick={handleView}>{blogVisible ? 'hide' : 'view'}</button> */}
       </div>
 
-      <div
-        style={blogVisible ? { display: '' } : { display: 'none' }}
-        className="blogContent"
-      >
+      <div style={{ display: 'none' }} className="blogContent">
         <div>{blog.url}</div>
         <div data-test="like-count">
           likes

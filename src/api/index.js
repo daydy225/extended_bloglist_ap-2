@@ -94,6 +94,24 @@ const api = {
       throw new Error(error?.response?.data.error)
     }
   },
+  createComment: async resource => {
+    try {
+      const token = window.localStorage.getItem('token')
+      if (token) {
+        const config = {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+        const response = await axios.post(
+          `${baseUrl}/blogs/${resource.blogId}/comments`,
+          { text: resource.text },
+          config,
+        )
+        return response.data
+      }
+    } catch (error) {
+      throw new Error(error?.response?.data.error)
+    }
+  },
 }
 
 export default api
